@@ -2,10 +2,11 @@
 #include <fstream>
 #include <string>
 #include <cmath>
-
+#include <chrono>
+using namespace std::chrono;
 using namespace std;
 
-const int SIZE = 512;
+const int SIZE = 128;
 #define high_threshold 50
 #define low_threshold 20
 
@@ -127,6 +128,8 @@ int main()
     std::ofstream myfile;
     std::string filename;
 
+    long total_time = 0;
+
     // Perform Gaussian smoothing on the input array using the 1D kernel
     gaussianSmoothing(inputArray, outputArray);
 
@@ -180,6 +183,22 @@ int main()
          }
          cout << endl;
      }*/
+
+    auto start = high_resolution_clock::now();
+    auto stop = high_resolution_clock::now();
+    auto duration = duration_cast<nanoseconds>(stop - start);
+    for (int test = 0; test < 10; test++)
+    {
+        start = high_resolution_clock::now();
+        sobel(outputArray, sobelOutput);
+        stop = high_resolution_clock::now();
+        duration = duration_cast<nanoseconds>(stop - start);
+        total_time += duration.count();
+        cout << "Test " << test << " Elapsed Time " << duration.count() << " ns\n";
+    }
+
+    cout << "\n";
+    cout << "Average over 10 tests " << total_time / 10 << " ns\n";
     printf("Done");
     return 0;
 }
